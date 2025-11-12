@@ -58,9 +58,12 @@ local function toggle_only(call)
 	print("line", line)
 
 	if is_only then
-		line = line:gsub("test%.only", "test")
+		line = line:gsub("([%w_]+)%.only", "%1")
 	else
-		line = line:gsub("test", "test.only", 1)
+		-- add .only only if it's not already there
+		if not line:match("test%.only") then
+			line = line:gsub("test", "test.only", 1)
+		end
 	end
 
 	print("subbed line", line)
