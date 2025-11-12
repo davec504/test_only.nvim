@@ -34,7 +34,7 @@ local function toggle_only(call)
 		end
 	end
 
-	local start_row, start_col, end_row, end_col = func_node:range()
+	local start_row = call:start()
 	local lines = vim.api.nvim_buf_get_lines(0, start_row, start_row + 1, false)
 	local line = lines[1] or "" --fallback to empty string
 
