@@ -32,6 +32,9 @@ local function toggle_only(call)
 		if prop_name == "only" then
 			is_only = true
 		end
+	elseif func_node:type() == "identifier" then
+		is_only = false
+		name = vim.treesitter.get_node_text(func_node, 0)
 	end
 
 	print("is_only", is_only)
