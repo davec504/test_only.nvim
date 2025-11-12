@@ -34,20 +34,20 @@ local function toggle_only(call)
 		end
 	end
 
-	print("is_only" .. is_only)
+	print("is_only", is_only)
 	local start_row = call:start()
 	local lines = vim.api.nvim_buf_get_lines(0, start_row, start_row + 1, false)
-	print("lines" .. lines)
+	print("lines", vim.inspect(lines))
 	local line = lines[1] or "" --fallback to empty string
-	print("line" .. line)
+	print("line", line)
 
 	if is_only then
-		line = line.gsub("test%.only", "test")
+		line = line:gsub("test%.only", "test")
 	else
-		line = line.gsub("test", "test.only", 1)
+		line = line:gsub("test", "test.only", 1)
 	end
 
-	print("subbed line" .. line)
+	print("subbed line", line)
 	vim.api.nvim_buf_set_lines(0, start_row, start_row + 1, false, { line })
 end
 
