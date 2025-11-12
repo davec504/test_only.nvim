@@ -10,10 +10,22 @@ local function find_test_call(node)
 	while node do
 		if node:type() == "call_expression" then
 			local func = node:child(0) -- first child is the function
-			if func and func:type() == "identifier" then
-				local name = vim.treesitter.get_node_text(func, 0)
-				if name == "test" then
-					return node
+			if func then
+				local func_type = func:type()
+
+				if func_type == "identifier" then
+					local name = vim.treesitter.get_node_text(func, 0)
+					if name == "test" then
+						return node
+					end
+				elseif func_type == "member_expression" then
+					local object = func:child(0)
+					if object and object:type() == "identifier" then
+						local obj_name = vim.treesitter.get_node_text(object, 0)
+						if obj_name == "test" then
+							return node
+						end
+					end
 				end
 			end
 		end
