@@ -6,27 +6,28 @@ local function node_at_cursor()
 	return ts_utils.get_node_at_cursor()
 end
 
+local function is_test_function_node(node)
+	if not node then
+		return false
+	end
+	local t = node:type()
+	if t == "identifier" then
+		return vim.treesitter.get_node_text(node, 0) == "test"
+	elseif t == "member_expression" then
+		local left = node:child(0)
+		return is_test_function_node(left)
+	else
+		return false
+	end
+end
+
 local function find_test_call(node)
 	while node do
 		if node:type() == "call_expression" then
-			local func = node:child(0) -- first child is the function
-			if func then
-				local func_type = func:type()
+			local func_node = node:child(0) -- first child is the function
 
-				if func_type == "identifier" then
-					local name = vim.treesitter.get_node_text(func, 0)
-					if name == "test" then
-						return node
-					end
-				elseif func_type == "member_expression" then
-					local object = func:child(0)
-					if object and object:type() == "identifier" then
-						local obj_name = vim.treesitter.get_node_text(object, 0)
-						if obj_name == "test" then
-							return node
-						end
-					end
-				end
+			if is_test_function_node(func_node) then
+				return node
 			end
 		end
 		node = node:parent()
