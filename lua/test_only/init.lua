@@ -59,8 +59,6 @@ M.inspect_node = function()
 	end
 
 	toggle_only(call)
-	local text = vim.treesitter.get_node_text(call, 0)
-	print("Nearest call expression in\n" .. text)
 end
 
 -- ======== WHICH KEY SETUP ====================
