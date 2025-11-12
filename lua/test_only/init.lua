@@ -37,18 +37,8 @@ end
 
 local function toggle_only(call)
 	local func_node = call:child(0)
-	local is_only = false
-
-	if func_node:type() == "member_expression" then
-		local property = func_node:child(1)
-		local prop_name = vim.treesitter.get_node_text(property, 0)
-		if prop_name == "only" then
-			is_only = true
-		end
-	elseif func_node:type() == "identifier" then
-		is_only = false
-		name = vim.treesitter.get_node_text(func_node, 0)
-	end
+	local func_text = vim.treesitter.get_node_text(func_node, 0)
+	local is_only = func_text:match("%.only") ~= nil
 
 	print("is_only", is_only)
 	local start_row = call:start()
