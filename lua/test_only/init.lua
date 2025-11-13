@@ -16,8 +16,13 @@ local function is_test_function_node(node)
 		return false
 	end
 	local t = node:type()
-	if t == "identifier" then
-		local name = vim.treesitter.get_node_text(node, 0)
+	local name = vim.treesitter.get_node_text(node, 0)
+
+	if valid_identifiers[name] then
+		return true
+	end
+
+	if t == "property_identifier" then
 		return valid_identifiers[name] == true
 	elseif t == "member_expression" then
 		local left = node:child(0)
