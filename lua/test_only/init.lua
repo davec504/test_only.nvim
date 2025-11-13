@@ -1,6 +1,11 @@
 local M = {}
 local wk = require("which-key")
 
+local valid_identifiers = {
+	test = true,
+	it = true,
+}
+
 local function node_at_cursor()
 	local ts_utils = require("nvim-treesitter.ts_utils")
 	return ts_utils.get_node_at_cursor()
@@ -12,7 +17,8 @@ local function is_test_function_node(node)
 	end
 	local t = node:type()
 	if t == "identifier" then
-		return vim.treesitter.get_node_text(node, 0) == "test"
+		local name = vim.treesitter.get_node_text(node, 0)
+		return valid_identifiers[name] == true
 	elseif t == "member_expression" then
 		local left = node:child(0)
 		return is_test_function_node(left)
@@ -48,11 +54,18 @@ local function toggle_only(call)
 	print("line", line)
 
 	if is_only then
-		line = line:gsub("([%w_]+)%.only", "%1")
+		-- remove .only from whatever the function is
+		line = line:gsub("([%w_]+)%.only", "%1", 1)
 	else
-		-- add .only only if it's not already there
-		if not line:match("test%.only") then
-			line = line:gsub("test", "test.only", 1)
+		-- add .only only if not already present
+		if not line:match("([%w_]+)%.only") then
+			-- find the first valid identifier in the line
+			for id, _ in pairs(valid_identifiers) do
+				if line:match(id) then
+					line = line:gsub(id, id .. ".only", 1)
+					break
+				end
+			end
 		end
 	end
 
